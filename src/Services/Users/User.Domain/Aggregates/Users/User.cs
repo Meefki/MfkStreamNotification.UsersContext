@@ -5,10 +5,7 @@ public class User : Entity<Guid>, IAggregateRoot
     private readonly DateTime _createdDate;
     public DateTime CreatedDate => _createdDate;
 
-    public string DisplayName { get; private set; }
-    public string Login { get; private set; }
-    public string Email { get; private set; }
-    public string Password { get; private set; }
+    public Credentials Credentials { get; private set; }
 
     public TwitchUser? TwitchUser { get; private set; }
 
@@ -17,56 +14,50 @@ public class User : Entity<Guid>, IAggregateRoot
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public User(
-        Guid id,
-        string displayName,
-        string login,
-        string password,
-        string email)
-        : base(new(id))
+        UserId id,
+        Credentials credentials)
+        : base(id)
     {
         _createdDate = DateTime.UtcNow;
 
         // TODO: Add validations for properties below (eg min length, regex for email and etc)
-        DisplayName = displayName;
-        Login = login;
-        Password = password;
-        Email = email;
+        Credentials = credentials;
 
-        AddUserCreatedDomainEvent(Id);
+        AddUserCreatedDomainEvent(this);
     }
 
     public void LinkTwitchUser(TwitchUser twitchUser)
     {
         TwitchUser = twitchUser;
 
-        AddTwitchUserLinkedDomainEvent(Id, twitchUser);
+        AddTwitchUserLinkedDomainEvent((Id as UserId)!, twitchUser);
     }
 
     public void UnlinkTwitchUser()
     {
         TwitchUser = null;
 
-        AddTwitchUserUnlinkedDomainEvent(Id);
+        AddTwitchUserUnlinkedDomainEvent((Id as UserId)!);
     }
 
     // TODO: Domain Events for changing email, login and display name
     #region Domain Events
 
-    private void AddUserCreatedDomainEvent(EntityIdentifier<Guid> userId)
+    private void AddUserCreatedDomainEvent(User user)
     {
-        var userCreatedDomainEvent = new UserCreatedDomainEvent(this);
+        var userCreatedDomainEvent = new UserCreatedDomainEvent(user);
 
         AddDomainEvent(userCreatedDomainEvent);
     }
 
-    private void AddTwitchUserLinkedDomainEvent(EntityIdentifier<Guid> userId, TwitchUser twitchUser)
+    private void AddTwitchUserLinkedDomainEvent(UserId userId, TwitchUser twitchUser)
     {
         var twitchUserLinkedDomainEvent = new TwitchUserLisnkedDomainEvent(userId, twitchUser);
 
         AddDomainEvent(twitchUserLinkedDomainEvent);
     }
 
-    private void AddTwitchUserUnlinkedDomainEvent(EntityIdentifier<Guid> userId)
+    private void AddTwitchUserUnlinkedDomainEvent(UserId userId)
     {
         var addTwitchUserUnlinkedDomainEvent = new TwitchUserUnlinkedDomainEvent(userId);
 

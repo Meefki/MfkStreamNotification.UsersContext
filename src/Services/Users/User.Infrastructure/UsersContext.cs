@@ -5,7 +5,7 @@ public class UsersContext : DbContext, IUnitOfWork
     public const string DEFAULT_SCHEMA = "users";
 
     DbSet<User> Users { get; set; }
-
+    
     private IDbContextTransaction? _currentTransaction;
 
     public UsersContext(DbContextOptions<UsersContext> options) : base(options) { }
@@ -20,6 +20,10 @@ public class UsersContext : DbContext, IUnitOfWork
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        // Dispatch domain events
+
+        var result = await base.SaveChangesAsync(cancellationToken);
+
+        return true;
     }
 }

@@ -12,8 +12,9 @@ public class TwitchUserEntityTypeConfiguration : IEntityTypeConfiguration<Twitch
 
         builder
             .Property(tu => tu.Id)
-            .HasField("_id")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasConversion(
+                twitchUserId => twitchUserId.Value,
+                value => new TwitchUserId(value))
             .UseHiLo("twitchuserseq", UsersContext.DEFAULT_SCHEMA);
         builder.HasKey(tu => tu.Id);
 

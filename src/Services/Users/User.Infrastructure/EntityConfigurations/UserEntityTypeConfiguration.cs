@@ -12,13 +12,20 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 
         builder
             .Property(u => u.Id)
-            .HasField("_id")
-            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasConversion(
+                userId => userId.Value,
+                value => new UserId(value))
             .UseHiLo("userseq", UsersContext.DEFAULT_SCHEMA);
         builder.HasKey(u => u.Id);
 
         builder
-            .Navigation(u => u.TwitchUser);
+            .HasOne(u => u.TwitchUser)
+            .WithOne()
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .OwnsOne(u => u.Credentials);
 
         builder
             .Property(u => u.CreatedDate)

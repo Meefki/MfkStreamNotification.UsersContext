@@ -14,12 +14,12 @@ public class TwitchUser : Entity<int>
     }
 
     public TwitchUser(
-        int id,
+        TwitchUserId id,
         string login,
         string email,
         string password,
         IEnumerable<int> scopes = null!)
-        : base(new(id))
+        : base(id)
     {
         Login = login;
         Email = email;

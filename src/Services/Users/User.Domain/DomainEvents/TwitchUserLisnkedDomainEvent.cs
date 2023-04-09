@@ -6,13 +6,13 @@
 public class TwitchUserLisnkedDomainEvent : IDomainEvent
 {
     public TwitchUserLisnkedDomainEvent(
-        EntityIdentifier<Guid> userId, 
+        UserId userId, 
         TwitchUser twitchUser)
     {
         UserId = userId;
         TwitchUser = twitchUser;
     }
 
-    public EntityIdentifier<Guid> UserId { get; set; }
+    public UserId UserId { get; set; }
     public TwitchUser TwitchUser { get; set; }
 }

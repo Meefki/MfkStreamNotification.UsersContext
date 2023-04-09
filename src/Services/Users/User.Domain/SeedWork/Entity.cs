@@ -2,29 +2,29 @@
 
 public abstract class Entity<T>
 {
-    public Entity(EntityIdentifier<T> id)
+    public Entity(IEntityIdentifier<T> id)
     {
-        _id = id.Value;
+        _id = id;
         _domainEvents = new();
     }
 
     int? _requestedHashCode;
     
-    T _id;
-    public virtual EntityIdentifier<T> Id
+    IEntityIdentifier<T> _id;
+    public virtual IEntityIdentifier<T> Id
     {
         get
         {
-            return new(_id);
+            return _id;
         }
         protected set
         {
-            _id = value.Value;
+            _id = value;
         }
     }
 
     private List<IDomainEvent> _domainEvents;
-    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly() ?? new List<IDomainEvent>().AsReadOnly();
 
     public void AddDomainEvent(IDomainEvent eventItem)
     {
@@ -49,7 +49,7 @@ public abstract class Entity<T>
 
     public override bool Equals(object? obj)
     {
-        if (obj == null || !(obj is Entity<T>))
+        if (obj == null || obj is not Entity<T>)
             return false;
 
         if (ReferenceEquals(this, obj))
@@ -77,13 +77,12 @@ public abstract class Entity<T>
         }
         else
             return base.GetHashCode();
-
     }
 
     public static bool operator ==(Entity<T> left, Entity<T> right)
     {
         if (Equals(left, null))
-            return Equals(right, null) ? true : false;
+            return Equals(right, null);
         else
             return left.Equals(right);
     }

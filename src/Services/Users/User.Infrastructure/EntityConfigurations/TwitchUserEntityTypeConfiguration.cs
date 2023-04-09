@@ -9,6 +9,7 @@ public class TwitchUserEntityTypeConfiguration : IEntityTypeConfiguration<Twitch
         builder.ToTable("twitch_users", UsersContext.DEFAULT_SCHEMA);
 
         builder.Ignore(tu => tu.DomainEvents);
+        builder.Ignore(tu => tu.Scopes);
 
         builder
             .Property(tu => tu.Id)
@@ -19,8 +20,8 @@ public class TwitchUserEntityTypeConfiguration : IEntityTypeConfiguration<Twitch
         builder.HasKey(tu => tu.Id);
 
         builder
-            .Property(tu => tu.Scopes)
-            .HasField("_scopes")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+            .Property("_scopes")
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .HasColumnName("Scopes");
     }
 }

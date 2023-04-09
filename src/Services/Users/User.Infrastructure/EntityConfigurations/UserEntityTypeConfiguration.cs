@@ -10,19 +10,15 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 
         builder.Ignore(u => u.DomainEvents);
 
+        builder.HasKey(u => u.Id);
+
         builder
             .Property(u => u.Id)
             .HasConversion(
                 userId => userId.Value,
-                value => new UserId(value))
-            .UseHiLo("userseq", UsersContext.DEFAULT_SCHEMA);
-        builder.HasKey(u => u.Id);
+                value => new UserId(value));
 
-        builder
-            .HasOne(u => u.TwitchUser)
-            .WithOne()
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Navigation(u => u.TwitchUser);
 
         builder
             .OwnsOne(u => u.Credentials);

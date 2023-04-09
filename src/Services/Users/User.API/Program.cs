@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore;
-using Users.API;
-
 var config = GetConfiguration();
 
-var host = BuildHost(config, args);
+var host = BuildWebHost(config, args);
 
 host.Run();
 
@@ -19,11 +16,10 @@ IConfiguration GetConfiguration()
     return builder.Build();
 }
 
-IWebHost BuildHost(IConfiguration configuration, string[] args)
-{
-    return WebHost.CreateDefaultBuilder(args)
+IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
+    WebHost.CreateDefaultBuilder(args)
         .CaptureStartupErrors(false)
         .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
         .UseStartup<Startup>()
+        .UseContentRoot(Directory.GetCurrentDirectory())
         .Build();
-}

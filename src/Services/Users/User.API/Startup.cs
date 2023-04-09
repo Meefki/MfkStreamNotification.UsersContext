@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-
-namespace Users.API;
+﻿namespace Users.API;
 
 public class Startup
 {
@@ -12,13 +9,38 @@ public class Startup
         Configuration = config;
     }
 
-    public virtual IServiceCollection ConfigureServices(IServiceCollection services)
+    public virtual IServiceProvider ConfigureServices(IServiceCollection services)
     {
         services
             .AddCustomMvc(Configuration)
+            .AddSwaggerGen()
             .AddCustomDbContext(Configuration);
 
-        return services;
+        var container = new ContainerBuilder();
+        container.Populate(services);
+
+        return new AutofacServiceProvider(container.Build());
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+    {
+        var pathBase = Configuration["PATH_BASE"];
+        if (!string.IsNullOrEmpty(pathBase))
+        {
+            loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
+            app.UsePathBase(pathBase);
+        }
+
+        app.UseSwagger()
+            .UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint($"{(!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty)}/swagger/v1/swagger.json", "Users.API V1");
+                c.OAuthClientId("usersswaggerui");
+                c.OAuthAppName("Users Swagger UI");
+            });
+
+        app.UseRouting();
+        app.UseCors("DefaultPolicy");
     }
 }
 
@@ -49,7 +71,7 @@ static class CustomExtentionsMethods
         this IServiceCollection services,
         IConfiguration config)
     {
-        services.AddDbContext<UserContext>(options =>
+        services.AddDbContext<UsersContext>(options =>
         {
             options.UseSqlServer(config.GetConnectionString("mssql"),
                 sqlServerOptionsAction: sqlOptions =>

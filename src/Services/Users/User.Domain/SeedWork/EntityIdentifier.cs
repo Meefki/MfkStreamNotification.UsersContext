@@ -1,3 +1,3 @@
-﻿namespace User.Domain.SeedWork;
+﻿namespace Users.Domain.SeedWork;
 
 public record EntityIdentifier<T>(T Value);

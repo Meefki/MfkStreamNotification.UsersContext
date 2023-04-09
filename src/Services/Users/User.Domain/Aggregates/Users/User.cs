@@ -1,4 +1,4 @@
-﻿namespace User.Domain.Aggregates.User;
+﻿namespace Users.Domain.Aggregates.Users;
 
 public class User : Entity<Guid>, IAggregateRoot
 {
@@ -17,9 +17,9 @@ public class User : Entity<Guid>, IAggregateRoot
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public User(
-        Guid id, 
-        string displayName, 
-        string login, 
+        Guid id,
+        string displayName,
+        string login,
         string password,
         string email)
         : base(new(id))
@@ -32,22 +32,46 @@ public class User : Entity<Guid>, IAggregateRoot
         Password = password;
         Email = email;
 
-        // TODO: UserCreatedDomainEvent
+        AddUserCreatedDomainEvent(Id);
     }
 
     public void LinkTwitchUser(TwitchUser twitchUser)
     {
         TwitchUser = twitchUser;
 
-        // TODO: TwitchUserLinkedDomainEvent
+        AddTwitchUserLinkedDomainEvent(Id, twitchUser);
     }
 
     public void UnlinkTwitchUser()
     {
         TwitchUser = null;
 
-        // TODO: TwitchUserUnlinkedDomainEvent
+        AddTwitchUserUnlinkedDomainEvent(Id);
     }
 
     // TODO: Domain Events for changing email, login and display name
+    #region Domain Events
+
+    private void AddUserCreatedDomainEvent(EntityIdentifier<Guid> userId)
+    {
+        var userCreatedDomainEvent = new UserCreatedDomainEvent(this);
+
+        AddDomainEvent(userCreatedDomainEvent);
+    }
+
+    private void AddTwitchUserLinkedDomainEvent(EntityIdentifier<Guid> userId, TwitchUser twitchUser)
+    {
+        var twitchUserLinkedDomainEvent = new TwitchUserLisnkedDomainEvent(userId, twitchUser);
+
+        AddDomainEvent(twitchUserLinkedDomainEvent);
+    }
+
+    private void AddTwitchUserUnlinkedDomainEvent(EntityIdentifier<Guid> userId)
+    {
+        var addTwitchUserUnlinkedDomainEvent = new TwitchUserUnlinkedDomainEvent(userId);
+
+        AddDomainEvent(addTwitchUserUnlinkedDomainEvent);
+    }
+
+    #endregion
 }

@@ -1,3 +1,3 @@
-﻿namespace User.Domain.SeedWork;
+﻿namespace Users.Domain.SeedWork;
 
 public interface IDomainEvent { }

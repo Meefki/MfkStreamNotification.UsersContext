@@ -1,4 +1,4 @@
-﻿namespace User.Domain.Aggregates.User;
+﻿namespace Users.Domain.Aggregates.Users;
 
 public class TwitchUser : Entity<int>
 {
@@ -6,8 +6,8 @@ public class TwitchUser : Entity<int>
     public string Email { get; private set; }
     public string Password { get; private set; }
 
-    private string _scopes;
-    public IEnumerable<int> Scopes 
+    private string? _scopes;
+    public IEnumerable<int> Scopes
     {
         get => ConvertStringScopesToCollection(_scopes);
         private set => _scopes = ConvertCollectionScopesToString(value);
@@ -27,21 +27,22 @@ public class TwitchUser : Entity<int>
         _scopes = ConvertCollectionScopesToString(scopes);
     }
 
-    private IEnumerable<int> ConvertStringScopesToCollection(string scopes)
-    {
-        return scopes
-            .Split(',')
-            .Select(int.Parse)
-            .ToList() ?? Enumerable.Empty<int>();
-    }
+    private IEnumerable<int> ConvertStringScopesToCollection(string? scopes)
+        => scopes is null 
+            ? Enumerable.Empty<int>() 
+            : scopes
+                .Split(',')
+                .Select(int.Parse)
+                .ToList();
 
-    private string ConvertCollectionScopesToString(IEnumerable<int> scopes)
-    {
-        return scopes is null ? "" : string.Join(",", scopes);
-    }
+    private string? ConvertCollectionScopesToString(IEnumerable<int> scopes)
+        => scopes is null 
+            ? null 
+            : string.Join(",", scopes);
 
     public void ProvideScopes(IEnumerable<int> scopes)
-    {
-        Scopes = scopes;
-    }
+        => Scopes = scopes;
+
+    public bool AreScopesProvided()
+        => _scopes != null;
 }

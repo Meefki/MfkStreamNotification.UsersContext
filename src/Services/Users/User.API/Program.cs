@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore;
-using UserService;
+using Users.API;
 
 var config = GetConfiguration();
 

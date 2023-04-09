@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace UserService;
+namespace Users.API;
 
 public class Startup
 {
@@ -25,7 +25,7 @@ public class Startup
 static class CustomExtentionsMethods
 {
     public static IServiceCollection AddCustomMvc(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         IConfiguration config)
     {
         services

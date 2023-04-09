@@ -1,4 +1,6 @@
-﻿namespace User.Domain.Aggregates.User;
+﻿using Users.Domain.SeedWork;
+
+namespace Users.Domain.Aggregates.Users;
 
 public interface IUserRepository : IRepository<User>
 {

@@ -1,24 +1,25 @@
-﻿namespace User.Domain.SeedWork;
+﻿namespace Users.Domain.SeedWork;
 
 public abstract class Entity<T>
 {
     public Entity(EntityIdentifier<T> id)
     {
-        _Id = id;
+        _id = id.Value;
         _domainEvents = new();
     }
 
     int? _requestedHashCode;
-    EntityIdentifier<T> _Id;
+    
+    T _id;
     public virtual EntityIdentifier<T> Id
     {
         get
         {
-            return _Id;
+            return new(_id);
         }
         protected set
         {
-            _Id = value;
+            _id = value.Value;
         }
     }
 
@@ -51,18 +52,18 @@ public abstract class Entity<T>
         if (obj == null || !(obj is Entity<T>))
             return false;
 
-        if (Object.ReferenceEquals(this, obj))
+        if (ReferenceEquals(this, obj))
             return true;
 
-        if (this.GetType() != obj.GetType())
+        if (GetType() != obj.GetType())
             return false;
 
         Entity<T> item = (Entity<T>)obj;
 
-        if (item.IsTransient() || this.IsTransient())
+        if (item.IsTransient() || IsTransient())
             return false;
         else
-            return item.Id == this.Id;
+            return item.Id == Id;
     }
 
     public override int GetHashCode()
@@ -70,7 +71,7 @@ public abstract class Entity<T>
         if (!IsTransient())
         {
             if (!_requestedHashCode.HasValue)
-                _requestedHashCode = this.Id.GetHashCode() ^ 31;
+                _requestedHashCode = Id.GetHashCode() ^ 31;
 
             return _requestedHashCode.Value;
         }
@@ -81,8 +82,8 @@ public abstract class Entity<T>
 
     public static bool operator ==(Entity<T> left, Entity<T> right)
     {
-        if (Object.Equals(left, null))
-            return Object.Equals(right, null) ? true : false;
+        if (Equals(left, null))
+            return Equals(right, null) ? true : false;
         else
             return left.Equals(right);
     }

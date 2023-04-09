@@ -1,6 +1,6 @@
-﻿namespace User.Domain.SeedWork;
+﻿namespace Users.Domain.SeedWork;
 
-public interface IRepository<T> 
+public interface IRepository<T>
     where T : IAggregateRoot
 {
     IUnitOfWork UnitOfWork { get; }

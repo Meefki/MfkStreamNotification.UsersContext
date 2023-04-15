@@ -1,8 +1,4 @@
-﻿using Users.Application.DomainEventHandlers.UserCreatedDomainEventHandler;
-using Users.Application.SeedWork.Mediator;
-using Users.Domain.SeedWork.Mediator;
-
-namespace Users.API.AutofacModules;
+﻿namespace Users.API.AutofacModules;
 
 public class DomainEventMediatorModule
     : Autofac.Module

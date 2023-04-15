@@ -1,6 +1,6 @@
 var config = GetConfiguration();
 
-var host = BuildWebHost(config, args);
+var host = CreateHostBuilder(config, args).Build();
 
 host.Run();
 
@@ -16,10 +16,12 @@ IConfiguration GetConfiguration()
     return builder.Build();
 }
 
-IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-    WebHost.CreateDefaultBuilder(args)
-        .CaptureStartupErrors(false)
+IHostBuilder CreateHostBuilder(IConfiguration configuration, string[] args) =>
+    Host.CreateDefaultBuilder(args)
+        .UseServiceProviderFactory(new AutofacServiceProviderFactory())
         .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
-        .UseStartup<Startup>()
-        .UseContentRoot(Directory.GetCurrentDirectory())
-        .Build();
+        .ConfigureWebHostDefaults(webBuilder =>
+        {
+            webBuilder.UseStartup<Startup>();
+            webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+        });

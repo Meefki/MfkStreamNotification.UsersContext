@@ -2,29 +2,47 @@
 
 public class Startup
 {
-    public IConfiguration Configuration { get; }
+    private readonly IConfiguration _config;
 
-    public Startup(IConfiguration config)
+    public Startup(
+        IConfiguration config)
     {
-        Configuration = config;
+        _config = config;
+
+        if (config is null)
+        {
+            _config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+        }
     }
 
-    public virtual IServiceProvider ConfigureServices(IServiceCollection services)
+    public void ConfigureServices(IServiceCollection services)
     {
         services
-            .AddCustomMvc(Configuration)
+            .AddCustomMvc(_config)
             .AddSwaggerGen()
-            .AddCustomDbContext(Configuration);
-
-        var container = new ContainerBuilder();
-        container.Populate(services);
-
-        return new AutofacServiceProvider(container.Build());
+            .AddCustomDbContext(_config);
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+    public void ConfigureContainer(ContainerBuilder builder)
     {
-        var pathBase = Configuration["PATH_BASE"];
+        builder.RegisterModule(new ApplicationModule(_config.GetConnectionString("mssql")!));
+        builder.RegisterModule(new MetiatorModule());
+        builder.RegisterModule(new DomainEventMediatorModule());
+    }
+
+    public void Configure(
+        IApplicationBuilder app, 
+        IHostEnvironment env, 
+        ILoggerFactory loggerFactory,
+        IServiceScopeFactory serviceScopeFactory)
+    {
+        DomainEventMediatorModule.ServiceScopeFactory = serviceScopeFactory;
+
+        var pathBase = _config["PATH_BASE"];
         if (!string.IsNullOrEmpty(pathBase))
         {
             loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
@@ -40,6 +58,10 @@ public class Startup
             });
 
         app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
         app.UseCors("DefaultPolicy");
     }
 }
@@ -58,10 +80,10 @@ static class CustomExtentionsMethods
             {
                 options.AddPolicy("DefaultPolicy",
                     builder => builder
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials()
-                    .WithOrigins(config["Cors:Origins"] ?? "http://localhost"));
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .WithOrigins(config["Cors:Origins"] ?? "https://localhost"));
             });
 
         return services;
@@ -76,12 +98,14 @@ static class CustomExtentionsMethods
             options.UseSqlServer(config.GetConnectionString("mssql"),
                 sqlServerOptionsAction: sqlOptions =>
                 {
-                    sqlOptions.MigrationsAssembly(
-                        typeof(Startup)
+                    var migrationAssemblyName =
+                        typeof(UsersContext)
                             .GetTypeInfo()
                             .Assembly
                             .GetName()
-                            .Name);
+                            .Name;
+                    sqlOptions.MigrationsAssembly(migrationAssemblyName);
+
                     sqlOptions.EnableRetryOnFailure(
                         maxRetryCount: 15,
                         maxRetryDelay: TimeSpan.FromSeconds(15),

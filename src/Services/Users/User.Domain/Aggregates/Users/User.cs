@@ -14,9 +14,8 @@ public class User : Entity<Guid>, IAggregateRoot
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public User(
-        UserId id,
         Credentials credentials)
-        : base(id)
+        : base(new UserId(Guid.NewGuid()))
     {
         _createdDate = DateTime.UtcNow;
 

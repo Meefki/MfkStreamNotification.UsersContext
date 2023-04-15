@@ -1,6 +1,8 @@
-﻿namespace Users.Domain.SeedWork;
+﻿using Users.Domain.SeedWork.Mediator;
 
-public abstract class Entity<T>
+namespace Users.Domain.SeedWork;
+
+public abstract class Entity<T> : IEntity
 {
     public Entity(IEntityIdentifier<T> id)
     {
@@ -44,7 +46,7 @@ public abstract class Entity<T>
 
     public bool IsTransient()
     {
-        return Id == default;
+        return Id is null || Id.Value is null;
     }
 
     public override bool Equals(object? obj)

@@ -1,24 +1,32 @@
 ﻿namespace Users.Infrastructure;
 
-public class UsersContext : DbContext, IUnitOfWork
+public class UsersContext : DbContext, IUnitOfWork, IUserDbContext
 {
     public const string DEFAULT_SCHEMA = "users";
 
+    private readonly IDomainEventMediator _mediator;
+
     public DbSet<User> Users { get; set; }
-    //DbSet<TwitchUser> TwitchUsers { get; set; }
+    public DbSet<TwitchUser> TwitchUsers { get; set; }
     
     private IDbContextTransaction? _currentTransaction;
 
-    public UsersContext() { }
-    public UsersContext(DbContextOptions<UsersContext> options) : base(options) { }
+    //public UsersContext() { }
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    optionsBuilder.UseSqlServer("Server =.;Initial Catalog = Mfk.StreamNotification.UsersDb;Integrated Security = true;TrustServerCertificate = true");
+    //}
+
+    public UsersContext(
+        DbContextOptions<UsersContext> options,
+        IDomainEventMediator mediator) 
+        : base(options) 
+    {
+        _mediator = mediator;
+    }
 
     public IDbContextTransaction? GetCurrentTransaction() => _currentTransaction;
     public bool HasActiveTransaction => _currentTransaction != null;
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer("Server =.;Initial Catalog = Mfk.StreamNotification.UsersDb;Integrated Security = true;TrustServerCertificate = true");
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -28,7 +36,7 @@ public class UsersContext : DbContext, IUnitOfWork
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
     {
-        // Dispatch domain events
+        await _mediator.DispatchDomainEventsAsync(this, cancellationToken);
 
         var result = await base.SaveChangesAsync(cancellationToken);
 

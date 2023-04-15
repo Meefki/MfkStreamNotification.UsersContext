@@ -20,8 +20,20 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 
         builder.Navigation(u => u.TwitchUser);
 
-        builder
-            .OwnsOne(u => u.Credentials);
+        builder.OwnsOne(u => u.Credentials, 
+            options =>
+            {
+                options
+                    .HasIndex(u => u.Email)
+                    .IsUnique()
+                    .HasDatabaseName("Unique_Email");
+
+                options
+                    .HasIndex(u => u.Login)
+                    .IsUnique()
+                    .HasDatabaseName("Unique_Login");
+            }
+        );
 
         builder
             .Property(u => u.CreatedDate)

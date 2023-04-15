@@ -1,4 +1,6 @@
-﻿namespace Users.Domain.DomainEvents;
+﻿using Users.Domain.SeedWork.Mediator;
+
+namespace Users.Domain.DomainEvents;
 
 /// <summary>
 /// Event used when a twitch user is unlinked from a user

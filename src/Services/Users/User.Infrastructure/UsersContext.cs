@@ -11,12 +11,6 @@ public class UsersContext : DbContext, IUnitOfWork, IUserDbContext
     
     private IDbContextTransaction? _currentTransaction;
 
-    //public UsersContext() { }
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    optionsBuilder.UseSqlServer("Server =.;Initial Catalog = Mfk.StreamNotification.UsersDb;Integrated Security = true;TrustServerCertificate = true");
-    //}
-
     public UsersContext(
         DbContextOptions<UsersContext> options,
         IDomainEventMediator mediator) 

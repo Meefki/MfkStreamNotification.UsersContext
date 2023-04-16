@@ -1,29 +1,16 @@
-﻿using Users.Domain.SeedWork.Mediator;
-
-namespace Users.Domain.SeedWork;
+﻿namespace Users.Domain.SeedWork;
 
 public abstract class Entity<T> : IEntity
 {
     public Entity(IEntityIdentifier<T> id)
     {
-        _id = id;
+        Id = id;
         _domainEvents = new();
     }
 
     int? _requestedHashCode;
     
-    IEntityIdentifier<T> _id;
-    public virtual IEntityIdentifier<T> Id
-    {
-        get
-        {
-            return _id;
-        }
-        protected set
-        {
-            _id = value;
-        }
-    }
+    public virtual IEntityIdentifier<T> Id { get; protected set; }
 
     private List<IDomainEvent> _domainEvents;
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly() ?? new List<IDomainEvent>().AsReadOnly();

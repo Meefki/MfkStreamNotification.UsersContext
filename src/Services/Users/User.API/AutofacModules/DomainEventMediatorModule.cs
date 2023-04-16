@@ -9,6 +9,7 @@ public class DomainEventMediatorModule
     {
         builder.RegisterType<DomainEventMediator>()
             .As<IDomainEventMediator>()
-            .SingleInstance();
+            .SingleInstance()
+            .OnActivated(dem => dem.Instance.Initialize());
     }
 }

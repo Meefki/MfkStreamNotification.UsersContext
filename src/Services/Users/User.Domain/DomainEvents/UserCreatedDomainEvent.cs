@@ -1,6 +1,4 @@
-﻿using Users.Domain.SeedWork.Mediator;
-
-namespace Users.Domain.DomainEvents;
+﻿namespace Users.Domain.DomainEvents;
 
 /// <summary>
 /// Event used when a user is created

@@ -8,9 +8,12 @@ public sealed class DomainEventMediator : IDomainEventMediator
 {
     private readonly ConcurrentDictionary<Type, List<object>> _handlers = new();
 
+    private readonly IServiceScopeFactory _serviceProviderFactory;
+    private bool _isInitialized = false;
+
     public DomainEventMediator(IServiceScopeFactory serviceScopeFactory)
     {
-        Initialize(serviceScopeFactory);
+        _serviceProviderFactory = serviceScopeFactory;
     }
 
     public async Task Publish<T>(T domainEvent, CancellationToken cancellationToken = default)
@@ -43,8 +46,13 @@ public sealed class DomainEventMediator : IDomainEventMediator
         _handlers[domainEventType].Add(handler);
     }
 
-    private void Initialize(IServiceScopeFactory factory)
+    public void Initialize()
     {
+        if (_isInitialized)
+            throw new InvalidOperationException($"{typeof(DomainEventMediator).FullName} was already initialized");
+
+        _isInitialized = true;
+
         var domainEventHandlerTypes = Assembly
                 .GetAssembly(typeof(DomainEventMediator))!
                 .GetTypes()
@@ -52,7 +60,7 @@ public sealed class DomainEventMediator : IDomainEventMediator
                     .Any(y => y.IsGenericType
                            && y.GetGenericTypeDefinition() == typeof(IDomainEventHandler<>)));
 
-        using var scope = factory.CreateScope();
+        using var scope = _serviceProviderFactory.CreateScope();
         foreach (var handlerType in domainEventHandlerTypes)
         {
             var domainEventType = handlerType

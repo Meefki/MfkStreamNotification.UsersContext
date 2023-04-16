@@ -1,9 +1,7 @@
-﻿using Users.Domain.SeedWork.Mediator;
-
-namespace Users.Domain.DomainEvents;
+﻿namespace Users.Domain.DomainEvents;
 
 /// <summary>
-/// Event used when a twitch user is linked to a user
+/// Event used when twitch user linked to user
 /// </summary>
 public class TwitchUserLisnkedDomainEvent : IDomainEvent
 {

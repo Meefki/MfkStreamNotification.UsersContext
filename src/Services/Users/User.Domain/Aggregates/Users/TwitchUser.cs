@@ -5,6 +5,7 @@ public class TwitchUser : Entity<int>
     public string Login { get; private set; }
     public string Email { get; private set; }
     public string Password { get; private set; }
+    public bool AreScopesProvided => _scopes != null;
 
     private string? _scopes;
     public IEnumerable<int> Scopes
@@ -45,7 +46,4 @@ public class TwitchUser : Entity<int>
 
     public void ProvideScopes(IEnumerable<int> scopes)
         => Scopes = scopes;
-
-    public bool AreScopesProvided()
-        => _scopes != null;
 }

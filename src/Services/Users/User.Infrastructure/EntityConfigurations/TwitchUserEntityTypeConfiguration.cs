@@ -10,6 +10,7 @@ public class TwitchUserEntityTypeConfiguration : IEntityTypeConfiguration<Twitch
 
         builder.Ignore(tu => tu.DomainEvents);
         builder.Ignore(tu => tu.Scopes);
+        builder.Ignore(tu => tu.AreScopesProvided);
 
         builder
             .Property(tu => tu.Id)

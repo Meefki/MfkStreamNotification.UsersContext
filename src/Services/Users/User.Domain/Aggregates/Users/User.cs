@@ -2,10 +2,20 @@
 
 public class User : Entity<Guid>, IAggregateRoot
 {
+    private UserId _id;
+    public override IEntityIdentifier<Guid> Id
+    {
+        get => _id;
+        protected set => _id = (UserId)value;
+    }
+
     private readonly DateTime _createdDate;
     public DateTime CreatedDate => _createdDate;
 
     public Credentials Credentials { get; private set; }
+
+    public bool IsActive { get; private set; }
+    public bool IsDeleted { get; private set; }
 
     public TwitchUser? TwitchUser { get; private set; }
 
@@ -17,7 +27,10 @@ public class User : Entity<Guid>, IAggregateRoot
         Credentials credentials)
         : base(new UserId(Guid.NewGuid()))
     {
+        _id = (UserId)Id;
         _createdDate = DateTime.UtcNow;
+        IsActive = false;
+        IsDeleted = false;
 
         // TODO: Add validations for properties below (eg min length, regex for email and etc)
         Credentials = credentials;
@@ -25,18 +38,48 @@ public class User : Entity<Guid>, IAggregateRoot
         AddUserCreatedDomainEvent(this);
     }
 
+    public void ActivateUser()
+    {
+        if (!IsActive)
+        {
+            IsActive = true;
+
+            AddUserActivatedDomainEvent(_id);
+        }
+    }
+
+    public void DeleteUser()
+    {
+        if (!IsDeleted)
+        {
+            IsDeleted = true;
+
+            AddUserDeletedDomainEvent(_id);
+        }
+    }
+
+    public void RestoreUser()
+    {
+        if (IsDeleted)
+        {
+            IsDeleted = false;
+
+            AddUserRestoredDomainEvent(_id);
+        }
+    }
+
     public void LinkTwitchUser(TwitchUser twitchUser)
     {
         TwitchUser = twitchUser;
 
-        AddTwitchUserLinkedDomainEvent((Id as UserId)!, twitchUser);
+        AddTwitchUserLinkedDomainEvent(_id, twitchUser);
     }
 
     public void UnlinkTwitchUser()
     {
         TwitchUser = null;
 
-        AddTwitchUserUnlinkedDomainEvent((Id as UserId)!);
+        AddTwitchUserUnlinkedDomainEvent(_id);
     }
 
     // TODO: Domain Events for changing email, login and display name
@@ -58,9 +101,30 @@ public class User : Entity<Guid>, IAggregateRoot
 
     private void AddTwitchUserUnlinkedDomainEvent(UserId userId)
     {
-        var addTwitchUserUnlinkedDomainEvent = new TwitchUserUnlinkedDomainEvent(userId);
+        var twitchUserUnlinkedDomainEvent = new TwitchUserUnlinkedDomainEvent(userId);
 
-        AddDomainEvent(addTwitchUserUnlinkedDomainEvent);
+        AddDomainEvent(twitchUserUnlinkedDomainEvent);
+    }
+
+    private void AddUserActivatedDomainEvent(UserId userId)
+    {
+        var userActivatedDomainEvent = new UserActivatedDomainEvent(userId);
+
+        AddDomainEvent(userActivatedDomainEvent);
+    }
+
+    private void AddUserDeletedDomainEvent(UserId userId)
+    {
+        var userDeletedDomainEvent = new UserDeletedDomainEvent(userId);
+
+        AddDomainEvent(userDeletedDomainEvent);
+    }
+
+    private void AddUserRestoredDomainEvent(UserId userId)
+    {
+        var userRestoredDomainEvent = new UserRestoredDomainEvent(userId);
+
+        AddDomainEvent(userRestoredDomainEvent);
     }
 
     #endregion

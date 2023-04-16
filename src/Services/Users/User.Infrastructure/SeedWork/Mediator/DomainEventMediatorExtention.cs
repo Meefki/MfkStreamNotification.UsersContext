@@ -1,11 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using Users.Application.SeedWork.Mediator;
+﻿namespace Users.Infrastructure.SeedWork.Mediator;
 
-namespace Users.Infrastructure.SeedWork.Mediator;
-
-public static class DomainEventMediatorExtantion
+public static class DomainEventMediatorExtention
 {
-    public static async Task DispatchDomainEventsAsync(this IDomainEventMediator mediator, IUserDbContext context, CancellationToken cancellationToken = default)
+    public static async Task DispatchDomainEventsAsync(
+        this IDomainEventMediator mediator, 
+        IUserDbContext context, 
+        CancellationToken cancellationToken = default)
     {
         var domainEntities = context.ChangeTracker
             .Entries<IEntity>()

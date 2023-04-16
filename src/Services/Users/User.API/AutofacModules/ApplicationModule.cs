@@ -1,6 +1,4 @@
-﻿using Autofac.Builder;
-
-namespace Users.API.AutofacModules;
+﻿namespace Users.API.AutofacModules;
 
 public class ApplicationModule
     : Autofac.Module
@@ -17,7 +15,6 @@ public class ApplicationModule
         builder
             .RegisterType<UserRepository>()
             .As<IUserRepository>()
-            .InstancePerLifetimeScope()
-            .CreateRegistration();
+            .AutoActivate(); // such important moment for avoid an infinite recursion
     }
 }

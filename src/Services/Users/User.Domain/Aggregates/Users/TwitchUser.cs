@@ -4,7 +4,6 @@ public class TwitchUser : Entity<int>
 {
     public string Login { get; private set; }
     public string Email { get; private set; }
-    public string Password { get; private set; }
     public bool AreScopesProvided => _scopes != null;
 
     private string? _scopes;
@@ -21,14 +20,17 @@ public class TwitchUser : Entity<int>
         TwitchUserId id,
         string login,
         string email,
-        string password,
-        IEnumerable<int> scopes = null!)
+        IEnumerable<int> scopes = null!,
+        string scopeString = null!)
         : base(id)
     {
         Login = login;
         Email = email;
-        Password = password;
-        _scopes = ConvertCollectionScopesToString(scopes);
+
+        if (scopes == null && scopeString != null)
+            _scopes = scopeString;
+        if (scopeString == null && scopes != null)
+            _scopes = ConvertCollectionScopesToString(scopes);
     }
 
     private IEnumerable<int> ConvertStringScopesToCollection(string? scopes)

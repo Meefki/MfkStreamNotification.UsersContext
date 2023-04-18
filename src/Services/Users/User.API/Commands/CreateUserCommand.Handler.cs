@@ -1,7 +1,7 @@
 ﻿namespace Users.API.Commands;
 
 public class CreateUserCommandHandler
-    : IRequestHandler<CreateUserCommand, bool>
+    : IRequestHandler<CreateUserCommand, Guid>
 {
     private readonly IUserRepository _userRepository;
 
@@ -11,7 +11,7 @@ public class CreateUserCommandHandler
         _userRepository = userRepository;
     }
 
-    public async Task<bool> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         Credentials credentials = new(
             request.DisplayName,
@@ -22,7 +22,9 @@ public class CreateUserCommandHandler
 
         _userRepository.Add(user);
 
-        return await _userRepository.UnitOfWork
+        await _userRepository.UnitOfWork
             .SaveEntitiesAsync(cancellationToken);
+
+        return user.Id.Value;
     }
 }

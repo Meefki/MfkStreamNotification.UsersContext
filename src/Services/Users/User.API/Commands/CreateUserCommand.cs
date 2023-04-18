@@ -1,7 +1,7 @@
 ﻿namespace Users.API.Commands;
 
 public class CreateUserCommand
-    : IRequest<bool>
+    : IRequest<Guid>
 {
     [DataMember] public string Login { get; private set; }
     [DataMember] public string Email { get; private set; }

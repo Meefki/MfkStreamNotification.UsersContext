@@ -19,10 +19,34 @@ namespace Users.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserCommand command)
         {
+            Guid? result = await _mediator.Send(command);
+
+            if (result != null)
+                return Ok(result);
+
+            return BadRequest();
+        }
+
+        [HttpPut]
+        [Route("twitch-user")]
+        public async Task<IActionResult> LinkTwitchUser([FromBody] LinkTwitchUserCommand command)
+        {
             var result = await _mediator.Send(command);
 
             if (result)
-                return Ok(result);
+                return Ok();
+
+            return BadRequest();
+        }
+
+        [HttpDelete]
+        [Route("twitch-user")]
+        public async Task<IActionResult> UnlinkTwitchUser([FromBody] UnlinkTwitchUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (result)
+                return Ok();
 
             return BadRequest();
         }

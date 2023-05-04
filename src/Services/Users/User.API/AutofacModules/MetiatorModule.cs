@@ -1,4 +1,5 @@
-﻿using Users.API.Commands;
+﻿using Users.API.Behaviors;
+using Users.API.Commands;
 
 namespace Users.API.AutofacModules;
 
@@ -12,5 +13,7 @@ public class MetiatorModule
 
         builder.RegisterAssemblyTypes(typeof(CreateUserCommand).GetTypeInfo().Assembly)
             .AsClosedTypesOf(typeof(IRequestHandler<,>));
+
+        builder.RegisterGeneric(typeof(LoggingBehavior<,>)).As(typeof(IPipelineBehavior<,>));
     }
 }

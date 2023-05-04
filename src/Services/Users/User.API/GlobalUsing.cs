@@ -13,3 +13,4 @@ global using global::Users.API.AutofacModules;
 global using global::System.Net;
 global using global::System.Runtime.Serialization;
 global using global::Users.Application.SeedWork.Mediator;
+global using global::Serilog;

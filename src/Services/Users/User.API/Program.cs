@@ -1,19 +1,62 @@
 var config = GetConfiguration();
 
-var host = CreateHostBuilder(config, args).Build();
+Log.Logger = CreateSerilogLogger(config);
 
-host.Run();
+try
+{
+    Log.Information("Configuring host ({ApplicationContext})", Program.AppName);
+    var host = CreateHostBuilder(config, args).Build();
 
-return 0;
+    Log.Information("Appying migrations ({ApplicationName})", Program.AppName);
+    using (var scope = host.Services.CreateScope())
+    {
+        using (var appContext = scope.ServiceProvider.GetRequiredService<UsersContext>())
+        {
+            try
+            {
+                appContext.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Migration proccess failed ({ApplicationName})", Program.AppName);
+            }
+        }
+    }
+
+    Log.Information("Starting host ({ApplicationContext})...", Program.AppName);
+    host.Run();
+
+    return 0;
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", Program.AppName);
+    return 1;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 IConfiguration GetConfiguration()
 {
     var builder = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile(GetAppSettingsFileName(), optional: false, reloadOnChange: true)
         .AddEnvironmentVariables();
 
     return builder.Build();
+}
+
+string GetAppSettingsFileName()
+{
+    string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")!;
+
+    return env switch
+    {
+        "Production" => "appsettings.json",
+        _ => $"appsettings.{env}.json"
+    };
 }
 
 IHostBuilder CreateHostBuilder(IConfiguration configuration, string[] args) =>
@@ -24,4 +67,24 @@ IHostBuilder CreateHostBuilder(IConfiguration configuration, string[] args) =>
         {
             webBuilder.UseStartup<Startup>();
             webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
-        });
+        })
+        .UseSerilog(Log.Logger);
+
+Serilog.ILogger CreateSerilogLogger(IConfiguration config)
+{
+    var seqServerUrl = config["Serilog:SeqServerUrl"];
+    return new LoggerConfiguration()
+        .MinimumLevel.Verbose()
+        .Enrich.WithProperty("ApplicationName", Program.AppName)
+        .Enrich.FromLogContext()
+        .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+        .ReadFrom.Configuration(config)
+        .CreateLogger();
+}
+
+public partial class Program
+{
+
+    public static string Namespace = typeof(Startup).Namespace!;
+    public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+}

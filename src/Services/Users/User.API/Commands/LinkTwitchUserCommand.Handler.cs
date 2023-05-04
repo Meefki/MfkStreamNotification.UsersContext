@@ -15,7 +15,7 @@ public class LinkTwitchUserCommandHandler
     {
         var user = await _userRepository.GetAsync(new(Guid.Parse(request.UserId)));
 
-        if (user is null)
+        if (user is null || user.TwitchUser?.Id is not null)
             return false;
 
         TwitchUser twitchUser = new(

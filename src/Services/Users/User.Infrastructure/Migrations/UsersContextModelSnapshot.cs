@@ -35,10 +35,6 @@ namespace Users.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("_scopes")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Scopes");

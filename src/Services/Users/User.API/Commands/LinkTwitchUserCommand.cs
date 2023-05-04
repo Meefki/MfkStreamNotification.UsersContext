@@ -1,4 +1,6 @@
-﻿namespace Users.API.Commands;
+﻿using Newtonsoft.Json;
+
+namespace Users.API.Commands;
 
 public class LinkTwitchUserCommand
     : IRequest<bool>
@@ -6,24 +8,19 @@ public class LinkTwitchUserCommand
     public string UserId { get; set; }
     public TwitchUserDTO TwitchUser { get; set; }
 
+    [JsonConstructor]
     public LinkTwitchUserCommand(
         string userId,
-        int twitchUserId,
-        string twtichUserLogin,
-        string twitchUserEmail,
-        string twitchUserScopes)
+        TwitchUserDTO twitchUserDTO)
     {
         UserId = userId;
-        TwitchUser = new(
-            twitchUserId, 
-            twtichUserLogin, 
-            twitchUserEmail, 
-            twitchUserScopes);
+        TwitchUser = twitchUserDTO;
     }
 }
 
 public record TwitchUserDTO
 {
+    [JsonConstructor]
     public TwitchUserDTO(
         int id,
         string login,

@@ -3,7 +3,7 @@
 public class Connection : Entity<Guid>
 {
     public ConnectionTo ConnectionTo { get; private set; }
-    public string UserId { get; private set; }
+    public string ForeignUserId { get; private set; }
     public string Login { get; private set; }
     public string Email { get; private set; }
     public bool AreScopesProvided => _scopes != null;
@@ -29,7 +29,7 @@ public class Connection : Entity<Guid>
         : base(id)
     {
         ConnectionTo = connectionTo;
-        UserId = userId;
+        ForeignUserId = userId;
         Login = login;
         Email = email;
 

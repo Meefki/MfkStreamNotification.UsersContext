@@ -23,7 +23,7 @@ public class User : Entity<Guid>, IAggregateRoot
     public IReadOnlyCollection<Connection> Connections => _connections.AsReadOnly();
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    private User() : base(null!) { }
+    private User() : base(null!) { _connections = new(); }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public User(
@@ -36,11 +36,12 @@ public class User : Entity<Guid>, IAggregateRoot
         IsActive = false;
         IsDeleted = false;
 
+        _connections = connections?.ToList() ?? new();
+
         // TODO: Add validations for properties below (eg min length, regex for email and etc)
         Credentials = credentials;
 
         AddUserCreatedDomainEvent(this);
-        _connections = connections?.ToList() ?? new();
     }
 
     public void ActivateUser()
@@ -75,6 +76,9 @@ public class User : Entity<Guid>, IAggregateRoot
 
     public void AddConnection(Connection connection)
     {
+        if (!IsActive)
+            throw new UserIsNotActivatedException(_id);
+
         if (_connections.Select(c => c.ConnectionTo).Contains(connection.ConnectionTo))
             throw new ConnectionAlreadyExistsException(connection.ConnectionTo);
 
@@ -85,6 +89,9 @@ public class User : Entity<Guid>, IAggregateRoot
 
     public void RemoveConnection(ConnectionTo connectionTo)
     {
+        if (!IsActive)
+            throw new UserIsNotActivatedException(_id);
+
         if (!_connections.Select(c => c.ConnectionTo).Contains(connectionTo))
             throw new ConnectionIsNotExistException(connectionTo);
 

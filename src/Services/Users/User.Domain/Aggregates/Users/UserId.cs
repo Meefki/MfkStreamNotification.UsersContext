@@ -8,4 +8,9 @@ public record UserId : IEntityIdentifier<Guid>
     }
 
     public Guid Value { get; protected set; }
+
+    public static UserId Create(Guid id)
+    {
+        return new(id);
+    }
 }

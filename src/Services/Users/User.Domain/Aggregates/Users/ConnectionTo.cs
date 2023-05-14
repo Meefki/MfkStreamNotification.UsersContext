@@ -1,6 +1,14 @@
 ﻿namespace Users.Domain.Aggregates.Users;
 
-public enum ConnectionTo
+public class ConnectionTo
+    : Enumeration
 {
-    Twitch = 0
+    public static ConnectionTo Twitch = new(1, nameof(Twitch));
+    public static ConnectionTo YouTube = new(2, nameof(YouTube));
+    public static ConnectionTo Trovo = new(3, nameof(Trovo));
+
+    public ConnectionTo(int id, string name) 
+        : base(id, name)
+    {
+    }
 }

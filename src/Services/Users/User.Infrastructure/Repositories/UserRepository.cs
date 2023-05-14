@@ -30,7 +30,7 @@ public class UserRepository : IUserRepository
         if (user is not null)
         {
             await _context.Entry(user)
-                .Reference(u => u.TwitchUser).LoadAsync();
+                .Reference(u => u.Connections).LoadAsync();
         }
 
         return user!;

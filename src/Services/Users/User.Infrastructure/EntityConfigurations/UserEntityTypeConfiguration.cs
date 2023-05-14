@@ -18,7 +18,7 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
                 userId => userId.Value,
                 value => new UserId(value));
 
-        builder.Navigation(u => u.TwitchUser);
+        builder.Navigation(u => u.Connections);
 
         builder.OwnsOne(u => u.Credentials, 
             options =>

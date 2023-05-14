@@ -1,18 +1,18 @@
 ﻿namespace Users.Domain.DomainEvents;
 
 /// <summary>
-/// Event used when twitch user linked to user
+/// Event used when connection added to user
 /// </summary>
-public class TwitchUserLisnkedDomainEvent : IDomainEvent
+public class ConnectionAddedDomainEvent : IDomainEvent
 {
-    public TwitchUserLisnkedDomainEvent(
+    public ConnectionAddedDomainEvent(
         UserId userId, 
-        TwitchUser twitchUser)
+        Connection twitchUser)
     {
         UserId = userId;
         TwitchUser = twitchUser;
     }
 
     public UserId UserId { get; set; }
-    public TwitchUser TwitchUser { get; set; }
+    public Connection TwitchUser { get; set; }
 }

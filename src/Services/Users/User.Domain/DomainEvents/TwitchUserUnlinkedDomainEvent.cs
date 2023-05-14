@@ -1,14 +1,18 @@
 ﻿namespace Users.Domain.DomainEvents;
 
 /// <summary>
-/// Event used when twitch user unlinked from user
+/// Event used when connection removed from user
 /// </summary>
-public class TwitchUserUnlinkedDomainEvent : IDomainEvent
+public class ConnectionRemovedDomainEvent : IDomainEvent
 {
-    public TwitchUserUnlinkedDomainEvent(UserId userId) // TODO: think about how to put type of id dynamically and get right type in the handlers
+    public ConnectionRemovedDomainEvent(
+        UserId userId,
+        ConnectionTo connectionTo)
     {
         UserId = userId;
+        ConnectionTo = connectionTo;
     }
 
     public UserId UserId { get; set; }
+    public ConnectionTo ConnectionTo { get; set; }
 }

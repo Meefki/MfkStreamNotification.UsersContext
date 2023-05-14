@@ -1,4 +1,6 @@
-﻿namespace Users.Domain.Aggregates.Users;
+﻿using Users.Domain.DomainExceptions;
+
+namespace Users.Domain.Aggregates.Users;
 
 public class User : Entity<Guid>, IAggregateRoot
 {
@@ -17,14 +19,16 @@ public class User : Entity<Guid>, IAggregateRoot
     public bool IsActive { get; private set; }
     public bool IsDeleted { get; private set; }
 
-    public TwitchUser? TwitchUser { get; private set; }
+    private List<Connection> _connections;
+    public IReadOnlyCollection<Connection> Connections => _connections.AsReadOnly();
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private User() : base(null!) { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public User(
-        Credentials credentials)
+        Credentials credentials, 
+        ICollection<Connection>? connections = null)
         : base(new UserId(Guid.NewGuid()))
     {
         _id = (UserId)Id;
@@ -36,6 +40,7 @@ public class User : Entity<Guid>, IAggregateRoot
         Credentials = credentials;
 
         AddUserCreatedDomainEvent(this);
+        _connections = connections?.ToList() ?? new();
     }
 
     public void ActivateUser()
@@ -68,18 +73,24 @@ public class User : Entity<Guid>, IAggregateRoot
         }
     }
 
-    public void LinkTwitchUser(TwitchUser twitchUser)
+    public void AddConnection(Connection connection)
     {
-        TwitchUser = twitchUser;
+        if (_connections.Select(c => c.ConnectionTo).Contains(connection.ConnectionTo))
+            throw new ConnectionAlreadyExistsException(connection.ConnectionTo);
 
-        AddTwitchUserLinkedDomainEvent(_id, twitchUser);
+        _connections.Add(connection);
+
+        AddConnectionAddedDomainEvent(_id, connection);
     }
 
-    public void UnlinkTwitchUser()
+    public void RemoveConnection(ConnectionTo connectionTo)
     {
-        TwitchUser = null;
+        if (!_connections.Select(c => c.ConnectionTo).Contains(connectionTo))
+            throw new ConnectionIsNotExistException(connectionTo);
 
-        AddTwitchUserUnlinkedDomainEvent(_id);
+        _connections.Remove(_connections.First(c => c.ConnectionTo == connectionTo));
+
+        AddConnectionRemovedDomainEvent(_id, connectionTo);
     }
 
     // TODO: Domain Events for changing email, login and display name
@@ -92,16 +103,16 @@ public class User : Entity<Guid>, IAggregateRoot
         AddDomainEvent(userCreatedDomainEvent);
     }
 
-    private void AddTwitchUserLinkedDomainEvent(UserId userId, TwitchUser twitchUser)
+    private void AddConnectionAddedDomainEvent(UserId userId, Connection twitchUser)
     {
-        var twitchUserLinkedDomainEvent = new TwitchUserLisnkedDomainEvent(userId, twitchUser);
+        var twitchUserLinkedDomainEvent = new ConnectionAddedDomainEvent(userId, twitchUser);
 
         AddDomainEvent(twitchUserLinkedDomainEvent);
     }
 
-    private void AddTwitchUserUnlinkedDomainEvent(UserId userId)
+    private void AddConnectionRemovedDomainEvent(UserId userId, ConnectionTo connectionTo)
     {
-        var twitchUserUnlinkedDomainEvent = new TwitchUserUnlinkedDomainEvent(userId);
+        var twitchUserUnlinkedDomainEvent = new ConnectionRemovedDomainEvent(userId, connectionTo);
 
         AddDomainEvent(twitchUserUnlinkedDomainEvent);
     }

@@ -2,38 +2,41 @@
 
 namespace Users.API.Commands;
 
-public class LinkTwitchUserCommand
+public class AddConnectionCommand
     : IRequest<bool>
 {
     public string UserId { get; set; }
-    public TwitchUserDTO TwitchUser { get; set; }
+    public ConnectionDTO Connection { get; set; }
 
     [JsonConstructor]
-    public LinkTwitchUserCommand(
+    public AddConnectionCommand(
         string userId,
-        TwitchUserDTO twitchUserDTO)
+        ConnectionDTO connectionDTO)
     {
         UserId = userId;
-        TwitchUser = twitchUserDTO;
+        Connection = connectionDTO;
     }
 }
 
-public record TwitchUserDTO
+public record ConnectionDTO
 {
     [JsonConstructor]
-    public TwitchUserDTO(
-        int id,
+    public ConnectionDTO(
+        string id,
+        ConnectionTo connectionTo,
         string login,
         string email,
         string scopes)
     {
         Id = id;
+        ConnectionTo = connectionTo;
         Login = login;
         Email = email;
         Scopes = scopes;
     }
 
-    public int Id { get; set; }
+    public string Id { get; set; }
+    public ConnectionTo ConnectionTo { get; set; }
     public string Login { get; set; }
     public string Email { get; set; }
     public string Scopes { get; set; }

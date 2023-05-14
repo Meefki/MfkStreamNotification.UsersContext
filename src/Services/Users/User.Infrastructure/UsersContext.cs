@@ -7,7 +7,7 @@ public class UsersContext : DbContext, IUnitOfWork, IUserDbContext
     private readonly IDomainEventMediator _mediator;
 
     public DbSet<User> Users { get; set; }
-    public DbSet<TwitchUser> TwitchUsers { get; set; }
+    public DbSet<Connection> TwitchUsers { get; set; }
     
     private IDbContextTransaction? _currentTransaction;
 
@@ -25,7 +25,7 @@ public class UsersContext : DbContext, IUnitOfWork, IUserDbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
-        modelBuilder.ApplyConfiguration(new TwitchUserEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new ConnectionEntityTypeConfiguration());
     }
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)

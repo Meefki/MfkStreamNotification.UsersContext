@@ -25,13 +25,10 @@ try
 
     Log.Information("Starting host ({ApplicationContext})...", Program.AppName);
     host.Run();
-
-    return 0;
 }
 catch (Exception ex)
 {
     Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", Program.AppName);
-    return 1;
 }
 finally
 {
@@ -78,13 +75,13 @@ Serilog.ILogger CreateSerilogLogger(IConfiguration config)
         .Enrich.WithProperty("ApplicationName", Program.AppName)
         .Enrich.FromLogContext()
         .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+        .WriteTo.Console()
         .ReadFrom.Configuration(config)
         .CreateLogger();
 }
 
 public partial class Program
 {
-
     public static string Namespace = typeof(Startup).Namespace!;
     public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
 }

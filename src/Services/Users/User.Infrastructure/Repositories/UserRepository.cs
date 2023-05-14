@@ -19,7 +19,6 @@ public class UserRepository : IUserRepository
     {
         var user = await _context
             .Users
-            .Include(u => u.Credentials)
             .FirstOrDefaultAsync(u => (u.Id as UserId) == userId);
 
         user ??= _context
@@ -30,7 +29,7 @@ public class UserRepository : IUserRepository
         if (user is not null)
         {
             await _context.Entry(user)
-                .Reference(u => u.Connections).LoadAsync();
+                .Collection(u => u.Connections).LoadAsync();
         }
 
         return user!;

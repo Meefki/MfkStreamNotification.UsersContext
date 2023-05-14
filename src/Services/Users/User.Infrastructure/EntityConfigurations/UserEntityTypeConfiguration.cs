@@ -16,9 +16,42 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
             .Property(u => u.Id)
             .HasConversion(
                 userId => userId.Value,
-                value => new UserId(value));
+                value => UserId.Create(value));
 
-        builder.Navigation(u => u.Connections);
+        builder.Navigation(u => u.Connections)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.OwnsMany(u => u.Connections, options =>
+        {
+            options.ToTable("connections", UsersContext.DEFAULT_SCHEMA);
+
+            options.WithOwner().HasForeignKey("UserId");
+
+            options.Ignore(tu => tu.DomainEvents);
+            options.Ignore(tu => tu.Scopes);
+            options.Ignore(tu => tu.AreScopesProvided);
+
+            options
+                .Property(tu => tu.Id)
+                .HasConversion(
+                    connectionId => connectionId.Value,
+                    value => ConnectionId.Create(value));
+            options.HasKey(tu => tu.Id);
+
+            options
+                .Property("_scopes")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("Scopes");
+
+            options
+                .Property(c => c.ForeignUserId);
+
+            options
+                .Property(c => c.ConnectionTo)
+                .HasConversion(
+                    input => input.Name,
+                    output => Enumeration.FromDisplayName<ConnectionTo>(output));
+        });
 
         builder.OwnsOne(u => u.Credentials, 
             options =>

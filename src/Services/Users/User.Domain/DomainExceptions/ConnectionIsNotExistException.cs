@@ -2,5 +2,5 @@
 
 internal class ConnectionIsNotExistException : Exception
 {
-    public ConnectionIsNotExistException(ConnectionTo connectionTo) : base($"Connection {connectionTo} is not exist") { }
+    public ConnectionIsNotExistException(ConnectionTo connectionTo) : base($"Connection {connectionTo.Name} is not exist") { }
 }

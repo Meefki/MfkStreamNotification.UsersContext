@@ -5,17 +5,8 @@ namespace Users.API.Commands;
 public class AddConnectionCommand
     : IRequest<bool>
 {
-    public string UserId { get; set; }
-    public ConnectionDTO Connection { get; set; }
-
-    [JsonConstructor]
-    public AddConnectionCommand(
-        string userId,
-        ConnectionDTO connectionDTO)
-    {
-        UserId = userId;
-        Connection = connectionDTO;
-    }
+    public string UserId { get; set; } = null!;
+    public ConnectionDTO Connection { get; set; } = null!;
 }
 
 public record ConnectionDTO
@@ -23,7 +14,7 @@ public record ConnectionDTO
     [JsonConstructor]
     public ConnectionDTO(
         string id,
-        ConnectionTo connectionTo,
+        string connectionTo,
         string login,
         string email,
         string scopes)
@@ -36,7 +27,7 @@ public record ConnectionDTO
     }
 
     public string Id { get; set; }
-    public ConnectionTo ConnectionTo { get; set; }
+    public string ConnectionTo { get; set; }
     public string Login { get; set; }
     public string Email { get; set; }
     public string Scopes { get; set; }

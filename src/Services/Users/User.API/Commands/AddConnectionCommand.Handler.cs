@@ -1,4 +1,6 @@
-﻿namespace Users.API.Commands;
+﻿using Users.Domain.SeedWork;
+
+namespace Users.API.Commands;
 
 public class LinkTwitchUserCommandHandler
     : IRequestHandler<AddConnectionCommand, bool>
@@ -18,16 +20,16 @@ public class LinkTwitchUserCommandHandler
         if (user is null)
             return false;
 
-        Connection twitchUser = new(
+        Connection connection = new(
             new(Guid.NewGuid()),
-            request.Connection.ConnectionTo,
+            Enumeration.FromDisplayName<ConnectionTo>(request.Connection.ConnectionTo),
             request.Connection.Id,
             request.Connection.Login,
             request.Connection.Email,
             scopeString: request.Connection.Scopes);
-        user.AddConnection(twitchUser);
+        user.AddConnection(connection);
 
         return await _userRepository.UnitOfWork
-            .SaveEntitiesAsync();
+            .SaveEntitiesAsync(cancellationToken);
     }
 }

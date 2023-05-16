@@ -1,4 +1,6 @@
-﻿namespace Users.API.AutofacModules;
+﻿using Users.API.Queries;
+
+namespace Users.API.AutofacModules;
 
 public class ApplicationModule
     : Autofac.Module
@@ -15,6 +17,11 @@ public class ApplicationModule
         builder
             .RegisterType<UserRepository>()
             .As<IUserRepository>()
-            .AutoActivate(); // such important moment for avoid an infinite recursion
+            .AutoActivate();
+
+        builder
+            .Register(c => new UserQueries(_queriesConnectionString))
+            .As<IUserQueries>()
+            .InstancePerLifetimeScope();
     }
 }

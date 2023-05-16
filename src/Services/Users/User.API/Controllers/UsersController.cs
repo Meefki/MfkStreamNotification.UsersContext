@@ -1,5 +1,7 @@
 ﻿using EventBus.Extentions;
 using Users.API.Commands;
+using Users.API.Queries;
+using User = Users.API.Queries.User;
 
 namespace Users.API.Controllers
 {
@@ -9,13 +11,35 @@ namespace Users.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<UsersController> _logger;
+        private readonly IUserQueries _userQueries;
 
         public UsersController(
             IMediator mediator,
-            ILogger<UsersController> logger)
+            ILogger<UsersController> logger,
+            IUserQueries userQueries)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+        }
+
+        [HttpGet]
+        [Route("{userId:Guid}")]
+        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult> GetuserAsync(Guid userId)
+        {
+            try
+            {
+                // TODO: create handler for query
+                // var user = _mediator.Send(new GetUserByIdQuery(userId));
+                var user = await _userQueries.GetUserAsync(userId);
+                return Ok(user);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]

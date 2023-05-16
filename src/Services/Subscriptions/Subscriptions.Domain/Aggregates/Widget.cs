@@ -35,7 +35,7 @@ public sealed class Widget
         _eventViewPorts = components.ToHashSet();
     }
 
-    public void ChangeTemplateUsing(bool isUsingDifferentTemplates)
+    public void ChangeTemplatesUsing(bool isUsingDifferentTemplates)
     {
         IsUsingDifferentTemplates = isUsingDifferentTemplates;
     }

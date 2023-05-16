@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DomainEventHandlers\TwitchUserUnlinkedDomainEventHandler\" />
-    <Folder Include="DomainEventHandlers\TwitchUserLinkedDomainEventHandler\" />
+    <Compile Remove="DomainEventHandlers\TwitchUserLinkedDomainEventHandler\**" />
+    <Compile Remove="DomainEventHandlers\TwitchUserUnlinkedDomainEventHandler\**" />
+    <EmbeddedResource Remove="DomainEventHandlers\TwitchUserLinkedDomainEventHandler\**" />
+    <EmbeddedResource Remove="DomainEventHandlers\TwitchUserUnlinkedDomainEventHandler\**" />
+    <None Remove="DomainEventHandlers\TwitchUserLinkedDomainEventHandler\**" />
+    <None Remove="DomainEventHandlers\TwitchUserUnlinkedDomainEventHandler\**" />
   </ItemGroup>
 
   <ItemGroup>

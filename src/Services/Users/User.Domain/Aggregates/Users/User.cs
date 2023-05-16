@@ -2,7 +2,7 @@
 
 namespace Users.Domain.Aggregates.Users;
 
-public class User : Entity<Guid>, IAggregateRoot
+public sealed class User : Entity<Guid>, IAggregateRoot
 {
     private UserId _id;
     public override IEntityIdentifier<Guid> Id

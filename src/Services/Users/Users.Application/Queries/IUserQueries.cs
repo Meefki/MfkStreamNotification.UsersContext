@@ -1,4 +1,4 @@
-﻿namespace Users.API.Queries;
+﻿namespace Users.Application.Queries;
 
 public interface IUserQueries
 {

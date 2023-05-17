@@ -1,5 +1,5 @@
 ﻿using Users.API.Behaviors;
-using Users.API.Commands;
+using Users.Application.Commands;
 
 namespace Users.API.AutofacModules;
 

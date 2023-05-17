@@ -1,7 +1,7 @@
 ﻿using EventBus.Extentions;
-using Users.API.Commands;
-using Users.API.Queries;
-using User = Users.API.Queries.User;
+using Users.Application.Commands;
+using Users.Application.Queries;
+using User = Users.Application.Queries.User;
 
 namespace Users.API.Controllers
 {

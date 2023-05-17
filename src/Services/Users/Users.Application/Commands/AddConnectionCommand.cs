@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace Users.API.Commands;
+namespace Users.Application.Commands;
 
 public class AddConnectionCommand
     : IRequest<bool>

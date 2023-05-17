@@ -1,4 +1,6 @@
-﻿namespace Users.API.Commands;
+﻿using System.Runtime.Serialization;
+
+namespace Users.Application.Commands;
 
 public class CreateUserCommand
     : IRequest<Guid>

@@ -1,13 +1,13 @@
 ﻿using Users.Domain.SeedWork;
 
-namespace Users.API.Commands;
+namespace Users.Application.Commands;
 
-public class LinkTwitchUserCommandHandler
+public class AddConnectionCommandHandler
     : IRequestHandler<AddConnectionCommand, bool>
 {
     private readonly IUserRepository _userRepository;
 
-    public LinkTwitchUserCommandHandler(
+    public AddConnectionCommandHandler(
         IUserRepository userRepository)
     {
         _userRepository = userRepository;

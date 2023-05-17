@@ -1,4 +1,4 @@
-﻿namespace Users.API.Commands;
+﻿namespace Users.Application.Commands;
 
 public class RemoveConnectionCommandHandler
     : IRequestHandler<RemoveConnectionCommand, bool>

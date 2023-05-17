@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using Users.Application.Queries;
+using User = Users.Application.Queries.User;
 
 namespace Users.API.Queries
 {

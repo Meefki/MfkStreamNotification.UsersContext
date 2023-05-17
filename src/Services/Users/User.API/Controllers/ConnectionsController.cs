@@ -1,5 +1,5 @@
 ﻿using EventBus.Extentions;
-using Users.API.Commands;
+using Users.Application.Commands;
 
 namespace Users.API.Controllers
 {

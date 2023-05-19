@@ -46,6 +46,9 @@ public sealed class User : Entity<Guid>, IAggregateRoot
 
     public void ActivateUser()
     {
+        if (IsDeleted)
+            throw new UserHasBeenDeletedException(_id);
+
         if (!IsActive)
         {
             IsActive = true;
@@ -77,7 +80,10 @@ public sealed class User : Entity<Guid>, IAggregateRoot
     public void AddConnection(Connection connection)
     {
         if (!IsActive)
-            throw new UserIsNotActivatedException(_id);
+            throw new UserHasNotBeenActivatedException(_id);
+
+        if (IsDeleted)
+            throw new UserHasBeenDeletedException(_id);
 
         if (_connections.Select(c => c.ConnectionTo).Contains(connection.ConnectionTo))
             throw new ConnectionAlreadyExistsException(connection.ConnectionTo);
@@ -90,7 +96,10 @@ public sealed class User : Entity<Guid>, IAggregateRoot
     public void RemoveConnection(ConnectionTo connectionTo)
     {
         if (!IsActive)
-            throw new UserIsNotActivatedException(_id);
+            throw new UserHasNotBeenActivatedException(_id);
+
+        if (IsDeleted)
+            throw new UserHasBeenDeletedException(_id);
 
         if (!_connections.Select(c => c.ConnectionTo).Contains(connectionTo))
             throw new ConnectionIsNotExistException(connectionTo);

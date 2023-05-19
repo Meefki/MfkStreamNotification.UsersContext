@@ -1,7 +1,7 @@
 ﻿using EventBus.Extentions;
 using Users.Application.Commands;
 using Users.Application.Queries;
-using User = Users.Application.Queries.User;
+using UserDto = Users.Application.Queries.UserDto;
 
 namespace Users.API.Controllers
 {
@@ -25,7 +25,7 @@ namespace Users.API.Controllers
 
         [HttpGet]
         [Route("{userId:Guid}")]
-        [ProducesResponseType(typeof(User), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<ActionResult> GetuserAsync(Guid userId)
         {

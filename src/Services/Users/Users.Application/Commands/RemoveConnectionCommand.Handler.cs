@@ -1,4 +1,6 @@
-﻿namespace Users.Application.Commands;
+﻿using Users.Domain.SeedWork;
+
+namespace Users.Application.Commands;
 
 public class RemoveConnectionCommandHandler
     : IRequestHandler<RemoveConnectionCommand, bool>
@@ -18,7 +20,7 @@ public class RemoveConnectionCommandHandler
         if (user is null)
             return false;
 
-        user.RemoveConnection(request.ConnectionTo);
+        user.RemoveConnection(Enumeration.FromDisplayName<ConnectionTo>(request.ConnectionTo));
 
         return await _userRepository.UnitOfWork
             .SaveEntitiesAsync();

@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Users.Application.Queries;
-using User = Users.Application.Queries.User;
+using UserDto = Users.Application.Queries.UserDto;
 
 namespace Users.API.Queries
 {
@@ -15,7 +15,7 @@ namespace Users.API.Queries
             _connectionString = connectionString;
         }
 
-        public async Task<User> GetUserAsync(Guid userId)
+        public async Task<UserDto> GetUserAsync(Guid userId)
         {
             using var connection = new SqlConnection(_connectionString);
             connection.Open();
@@ -46,9 +46,9 @@ namespace Users.API.Queries
             return MapUser(result);
         }
 
-        private User MapUser(dynamic result)
+        private UserDto MapUser(dynamic result)
         {
-            User user = new()
+            UserDto user = new()
             {
                 Id = result[0].Id,
                 CreatedDate = result[0].CreatedDate,
@@ -62,7 +62,7 @@ namespace Users.API.Queries
 
             foreach (dynamic connection in result)
             {
-                Connection con = new()
+                ConnectionDto con = new()
                 {
                     Id = connection.ConnectionId,
                     ConnectionTo = connection.ConnectionTo,

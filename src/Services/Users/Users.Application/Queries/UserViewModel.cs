@@ -1,6 +1,6 @@
 ﻿namespace Users.Application.Queries;
 
-public record User
+public record UserDto
 {
     public Guid Id { get; set; }
     public DateTime CreatedDate { get; set; }
@@ -9,10 +9,10 @@ public record User
     public string? Email { get; set; }
     public bool IsActive { get; set; }
     public bool IsDeleted { get; set; }
-    public List<Connection> Connections { get; set; } = new();
+    public List<ConnectionDto> Connections { get; set; } = new();
 }
 
-public record Connection
+public record ConnectionDto
 {
     public Guid Id { get; set; }
     public string ConnectionTo { get; set; } = string.Empty;

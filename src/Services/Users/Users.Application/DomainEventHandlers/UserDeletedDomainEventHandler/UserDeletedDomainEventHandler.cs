@@ -3,8 +3,8 @@
 internal class UserDeletedDomainEventHandler
     : IDomainEventHandler<UserDeletedDomainEvent>
 {
-    public async Task Handle(UserDeletedDomainEvent domainEvent, CancellationToken cancellationToken = default)
+    public Task Handle(UserDeletedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        
+        throw new NotImplementedException();
     }
 }

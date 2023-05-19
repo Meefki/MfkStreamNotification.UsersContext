@@ -3,8 +3,8 @@
 public class UserCreatedDomainEventHandler 
     : IDomainEventHandler<UserCreatedDomainEvent>
 {
-    public async Task Handle(UserCreatedDomainEvent domainEvent, CancellationToken cancellationToken = default)
+    public Task Handle(UserCreatedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        
+        throw new NotImplementedException();
     }
 }

@@ -6,7 +6,6 @@ namespace Subscriptions.Domain.Aggregates;
 public class ViewPort
     : ComponentVO
 {
-    public EventType EventType { get; init; }
     public Picture? Picture { get; init; }
     public Audio? Audio { get; init; }
 
@@ -18,7 +17,6 @@ public class ViewPort
         Position position,
         Size size,
         Duration duration,
-        EventType eventType,
         Picture? picture = null,
         Audio? audio = null,
         ICollection<Text>? texts = null)
@@ -29,10 +27,9 @@ public class ViewPort
             (texts is null ||
             texts.Count == 0))
         {
-            throw new AttemptToCreateEmptyViewPortException(nameof(picture), nameof(audio), nameof(texts));
+            throw new AttemptToCreateEmptyViewPortException();
         }
 
-        EventType = eventType;
         Picture = picture;
         Audio = audio;
 
@@ -48,7 +45,6 @@ public class ViewPort
     {
         yield return base.GetEqualityComponents();
 
-        yield return EventType;
         yield return Picture ?? Picture.CreateEmpty();
         yield return Audio ?? Audio.CreateEmpty();
         yield return Texts;

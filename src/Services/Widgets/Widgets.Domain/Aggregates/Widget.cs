@@ -1,4 +1,6 @@
 ﻿using Subscriptions.Domain.SeedWork;
+using Widgets.Domain.Aggregates;
+using Widgets.Domain.DomainExceptions;
 
 namespace Subscriptions.Domain.Aggregates;
 
@@ -13,40 +15,54 @@ public sealed class Widget
     }
 
     public UserId UserId { get; private set; }
-    public bool IsUsingDifferentTemplates { get; private set; }
+    public bool IsSingleTemplateUsing { get; private set; }
 
-    HashSet<KeyValuePair<Provider, ViewPort>> _eventViewPorts;
-    IReadOnlyCollection<KeyValuePair<Provider, ViewPort>> EventViewPorts
-        => _eventViewPorts;
+    List<ProviderViewPort> _providerViewPorts;
+    IReadOnlyCollection<ProviderViewPort> ProviderViewPorts
+        => _providerViewPorts;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Widget() : base(null!) { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    public Widget(
-        UserId userId, 
-        bool isUsingDifferentTemplates,
-        ICollection<KeyValuePair<Provider, ViewPort>> components)
+    private Widget(
+        UserId userId,
+        bool isSingleTemplateUsed,
+        ICollection<ProviderViewPort> components)
         : base(WidgetId.Create(Guid.NewGuid()))
     {
         _id = (WidgetId)Id;
         UserId = userId;
-        IsUsingDifferentTemplates = isUsingDifferentTemplates;
-        _eventViewPorts = components.ToHashSet();
+        IsSingleTemplateUsing = isSingleTemplateUsed;
+        _providerViewPorts = components.ToList();
     }
 
-    public void ChangeTemplatesUsing(bool isUsingDifferentTemplates)
+    public void ChangeTemplatesUsing(bool isSingleTemplateUsing)
     {
-        IsUsingDifferentTemplates = isUsingDifferentTemplates;
+        IsSingleTemplateUsing = isSingleTemplateUsing;
     }
 
-    public void AddEventViewPort(Provider provider, ViewPort viewPort)
+    public void AddEventViewPortToProvider(ProviderViewPort providerViewPort)
     {
-        _eventViewPorts.Add(new(provider, viewPort));
+        if (IsSingleTemplateUsing && providerViewPort.Id != Provider.Common)
+            throw new UnsupportedProviderException(IsSingleTemplateUsing, providerViewPort.Id.Value);
+
+        _providerViewPorts.Add(providerViewPort);
     }
 
-    public void RemoveEventViewPort(Provider provider, ViewPort viewPort)
+    public void RemoveEventViewPortFromProvider(ProviderViewPort providerViewPort)
     {
-        _eventViewPorts.Remove(new(provider, viewPort));
+        if (IsSingleTemplateUsing && providerViewPort.Id != Provider.Common)
+            throw new UnsupportedProviderException(IsSingleTemplateUsing, providerViewPort.Id.Value);
+
+        _providerViewPorts.Remove(providerViewPort);
+    }
+
+    public static Widget Create(
+        UserId userId,
+        bool isSingleTemplateUsed,
+        ICollection<ProviderViewPort> providerViewPorts)
+    {
+        return new(userId, isSingleTemplateUsed, providerViewPorts);
     }
 }

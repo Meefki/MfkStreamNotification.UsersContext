@@ -36,7 +36,7 @@ namespace Users.API.Queries
                       ,c.Email                   as [ConnectionEmail]
                       ,c.Scopes
                     from users.users        as u
-                    join users.connections  as c on c.UserId = u.Id
+                    left join users.connections  as c on c.UserId = u.Id
                     where u.id = @userId", 
                 new { userId });
 
@@ -62,6 +62,9 @@ namespace Users.API.Queries
 
             foreach (dynamic connection in result)
             {
+                if (connection.ConnectionId is null)
+                    continue;
+
                 ConnectionDto con = new()
                 {
                     Id = connection.ConnectionId,

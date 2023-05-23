@@ -1,4 +1,7 @@
-﻿namespace Users.API;
+﻿using Microsoft.EntityFrameworkCore;
+using Users.Infrastructure;
+
+namespace Users.API;
 
 public class Startup
 {

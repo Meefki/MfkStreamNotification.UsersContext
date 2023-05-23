@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Users.Infrastructure;
+
 var config = GetConfiguration();
 
 Log.Logger = CreateSerilogLogger(config);

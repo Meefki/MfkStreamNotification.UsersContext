@@ -4,6 +4,7 @@ public class UserActivatedDomainEventHandler : IDomainEventHandler<UserActivated
 {
     public Task Handle(UserActivatedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

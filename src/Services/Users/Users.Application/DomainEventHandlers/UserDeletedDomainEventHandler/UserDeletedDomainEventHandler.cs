@@ -5,6 +5,7 @@ internal class UserDeletedDomainEventHandler
 {
     public Task Handle(UserDeletedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

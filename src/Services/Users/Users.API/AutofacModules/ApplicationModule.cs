@@ -1,5 +1,6 @@
 ﻿using Users.API.Queries;
 using Users.Application.Queries;
+using Users.Infrastructure.Repositories;
 
 namespace Users.API.AutofacModules;
 

@@ -1,4 +1,6 @@
-﻿namespace Users.Application.Commands;
+﻿using Users.Domain.Aggregates.Users;
+
+namespace Users.Application.Commands;
 
 public class ActivateUserCommandHandler
     : IRequestHandler<ActivateUserCommand, bool>

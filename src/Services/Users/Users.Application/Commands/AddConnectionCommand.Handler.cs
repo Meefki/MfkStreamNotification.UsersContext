@@ -1,4 +1,5 @@
-﻿using Users.Domain.SeedWork;
+﻿using Users.Application.Repositories;
+using Users.Domain.SeedWork;
 
 namespace Users.Application.Commands;
 

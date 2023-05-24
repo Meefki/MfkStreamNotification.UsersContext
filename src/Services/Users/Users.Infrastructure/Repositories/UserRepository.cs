@@ -1,4 +1,6 @@
-﻿namespace Users.Infrastructure.Repositories;
+﻿using Users.Application.Repositories;
+
+namespace Users.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {

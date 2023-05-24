@@ -1,4 +1,6 @@
-﻿namespace Users.Application.Commands;
+﻿using Users.Application.Repositories;
+
+namespace Users.Application.Commands;
 
 public class DeleteUserCommandHandler
     : IRequestHandler<DeleteUserCommand, bool>

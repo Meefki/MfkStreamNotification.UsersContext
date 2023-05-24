@@ -1,4 +1,4 @@
-﻿using Users.Domain.Aggregates.Users;
+﻿using Users.Application.Repositories;
 
 namespace Users.Application.Commands;
 
